@@ -700,7 +700,7 @@ export function ResultClient({ type }: { type: ResultType }) {
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link
-              href="/test"
+              href="/test/"
               className="px-8 py-4 rounded-full text-white font-semibold text-lg text-center border shadow-lg backdrop-blur-md
                          bg-slate-800/40 border-slate-600/50 hover:bg-slate-700/50 transition-colors"
             >

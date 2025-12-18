@@ -58,7 +58,8 @@ export default function TestPage() {
         i: averages.i.toFixed(2),
         pi: averages.pi.toFixed(2),
       }).toString();
-      router.push(`/result/${type}?${qs}`);
+      // ✅ 정적 export 환경에서 가장 확실한 이동: 전체 페이지 네비게이션
+      window.location.href = `/result/${type}/?${qs}`;
     }
   };
 

@@ -19,7 +19,7 @@ export default function Home() {
         <div className="h-[1px] w-24 bg-zinc-800" />
 
         <Link 
-          href="/test"
+          href="/test/"
           className="group relative px-12 py-4 border border-zinc-700 hover:border-white transition-all duration-500"
         >
           <span className="relative z-10 text-sm tracking-[0.3em] font-light group-hover:text-black transition-colors duration-500">
