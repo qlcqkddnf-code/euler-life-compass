@@ -26,7 +26,24 @@ export default function RootLayout({
     <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}
+        style={{
+          backgroundColor: "#000",
+          color: "#fff",
+          minHeight: "100vh",
+          margin: 0,
+        }}
       >
+        {/* ✅ “가장 원초적이고 확실한 방법”: CSS가 하나도 로드되지 않아도 무조건 다크 바탕 강제 */}
+        <style>{`
+          html, body {
+            background: #000 !important;
+            color: #fff !important;
+            height: 100%;
+            margin: 0;
+          }
+          a { color: inherit; }
+          * { box-sizing: border-box; }
+        `}</style>
         {children}
       </body>
     </html>
