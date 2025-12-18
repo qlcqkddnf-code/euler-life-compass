@@ -1,0 +1,136 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { questions, type Question } from '@/constants/questions';
+import { calculateResultDetailed } from '@/utils/calculateResult';
+
+/**
+ * Fisher-Yates 알고리즘을 사용한 배열 셔플 함수
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+export default function TestPage() {
+  const router = useRouter();
+  const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 컴포넌트 마운트 시 문항 섞기
+  useEffect(() => {
+    const shuffled = shuffleArray(questions);
+    setShuffledQuestions(shuffled);
+    setIsLoading(false);
+  }, []);
+
+  const currentQuestion = shuffledQuestions[currentIndex];
+  const total = shuffledQuestions.length;
+  const answeredCount = Object.keys(answers).length;
+  const progress = total > 0 ? (answeredCount / total) * 100 : 0;
+
+  const handleAnswer = (score: number) => {
+    if (!currentQuestion) return;
+
+    // ✅ 상태 업데이트 비동기 이슈 방지: nextAnswers를 먼저 만들고 동일 값으로 set + 계산에 사용
+    const nextAnswers = {
+      ...answers,
+      [currentQuestion.id]: score,
+    };
+    setAnswers(nextAnswers);
+
+    // 다음 문항으로 이동
+    if (currentIndex < total - 1) {
+      setCurrentIndex(prev => prev + 1);
+    } else {
+      // 모든 문항 완료 - 결과 계산 및 리다이렉트
+      const { type, averages } = calculateResultDetailed(nextAnswers);
+      const qs = new URLSearchParams({
+        e: averages.e.toFixed(2),
+        i: averages.i.toFixed(2),
+        pi: averages.pi.toFixed(2),
+      }).toString();
+      router.push(`/result/${type}?${qs}`);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-white text-xl">로딩 중...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+      {/* Progress Bar */}
+      <div className="w-full h-1 bg-slate-700">
+        <motion.div
+          className="h-full bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+        />
+      </div>
+
+      <div className="container mx-auto px-4 py-12 max-w-2xl">
+        {/* Progress Text */}
+        <div className="text-center mb-8 text-slate-400">
+          {answeredCount} / {total}
+        </div>
+
+        {/* Question Card */}
+        <AnimatePresence mode="wait">
+          {currentQuestion && (
+            <motion.div
+              key={currentQuestion.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-slate-700/50"
+            >
+              <h2 className="text-2xl font-semibold mb-8 leading-relaxed">
+                {currentQuestion.text}
+              </h2>
+
+              {/* Answer Options */}
+              <div className="grid grid-cols-7 gap-3 mt-8">
+                {[1, 2, 3, 4, 5, 6, 7].map((score) => (
+                  <motion.button
+                    key={score}
+                    onClick={() => handleAnswer(score)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-3 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 
+                             border border-slate-600/50 hover:border-purple-400/50
+                             transition-colors duration-200 font-medium
+                             focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                  >
+                    {score}
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* Scale Labels */}
+              <div className="flex justify-between mt-4 text-sm text-slate-400">
+                <span>전혀 아니다</span>
+                <span>매우 그렇다</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
