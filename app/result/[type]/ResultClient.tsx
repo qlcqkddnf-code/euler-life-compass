@@ -503,7 +503,8 @@ export function ResultClient({ type }: { type: ResultType }) {
   }, [searchParams]);
 
   const handleShare = useCallback(async () => {
-    const base = `${window.location.origin}${window.location.pathname}`;
+    const pathname = window.location.pathname.endsWith('/') ? window.location.pathname : `${window.location.pathname}/`;
+    const base = `${window.location.origin}${pathname}`;
     const url = new URL(base);
 
     // ✅ 평균값은 /test → /result 이동 시 쿼리로 전달됨

@@ -65,27 +65,61 @@ export default function TestPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">로딩 중...</div>
+      <div
+        className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center"
+        style={{
+          minHeight: '100vh',
+          backgroundColor: 'black',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div className="text-white text-xl" style={{ color: 'white', fontSize: '1.25rem' }}>
+          로딩 중...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div
+      className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white"
+      style={{
+        minHeight: '100vh',
+        backgroundColor: 'black',
+        color: 'white',
+      }}
+    >
       {/* Progress Bar */}
-      <div className="w-full h-1 bg-slate-700">
+      <div
+        className="w-full h-1 bg-slate-700"
+        style={{ width: '100%', height: '4px', backgroundColor: '#334155' }}
+      >
         <motion.div
           className="h-full bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"
+          style={{
+            height: '100%',
+            background:
+              'linear-gradient(90deg, rgba(96,165,250,1), rgba(192,132,252,1), rgba(244,114,182,1))',
+          }}
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
         />
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-2xl">
+      <div
+        className="container mx-auto px-4 py-12 max-w-2xl"
+        style={{
+          maxWidth: '42rem',
+          marginInline: 'auto',
+          padding: '3rem 1rem',
+        }}
+      >
         {/* Progress Text */}
-        <div className="text-center mb-8 text-slate-400">
+        <div className="text-center mb-8 text-slate-400" style={{ textAlign: 'center', marginBottom: '2rem', color: '#94a3b8' }}>
           {answeredCount} / {total}
         </div>
 
@@ -99,13 +133,31 @@ export default function TestPage() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-slate-700/50"
+              style={{
+                backgroundColor: 'rgba(30, 41, 59, 0.55)',
+                border: '1px solid rgba(148, 163, 184, 0.25)',
+                borderRadius: '1rem',
+                padding: '2rem',
+                boxShadow: '0 20px 80px rgba(0,0,0,0.6)',
+              }}
             >
-              <h2 className="text-2xl font-semibold mb-8 leading-relaxed">
+              <h2
+                className="text-2xl font-semibold mb-8 leading-relaxed"
+                style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '2rem', lineHeight: 1.6 }}
+              >
                 {currentQuestion.text}
               </h2>
 
               {/* Answer Options */}
-              <div className="grid grid-cols-7 gap-3 mt-8">
+              <div
+                className="grid grid-cols-7 gap-3 mt-8"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
+                  gap: '0.75rem',
+                  marginTop: '2rem',
+                }}
+              >
                 {[1, 2, 3, 4, 5, 6, 7].map((score) => (
                   <motion.button
                     key={score}
@@ -116,6 +168,15 @@ export default function TestPage() {
                              border border-slate-600/50 hover:border-purple-400/50
                              transition-colors duration-200 font-medium
                              focus:outline-none focus:ring-2 focus:ring-purple-400/50"
+                    style={{
+                      padding: '0.75rem 0.75rem',
+                      borderRadius: '0.75rem',
+                      backgroundColor: 'rgba(51, 65, 85, 0.55)',
+                      border: '1px solid rgba(148, 163, 184, 0.25)',
+                      color: 'white',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
                   >
                     {score}
                   </motion.button>
@@ -123,7 +184,16 @@ export default function TestPage() {
               </div>
 
               {/* Scale Labels */}
-              <div className="flex justify-between mt-4 text-sm text-slate-400">
+              <div
+                className="flex justify-between mt-4 text-sm text-slate-400"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginTop: '1rem',
+                  fontSize: '0.875rem',
+                  color: '#94a3b8',
+                }}
+              >
                 <span>전혀 아니다</span>
                 <span>매우 그렇다</span>
               </div>
