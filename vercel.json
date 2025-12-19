@@ -1,0 +1,10 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/result/(.*)/", "dest": "/result/$1/index.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
+
