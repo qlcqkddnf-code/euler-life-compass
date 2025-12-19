@@ -434,6 +434,15 @@ export function ResultClient({ type }: { type: ResultType }) {
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('복사되었습니다');
 
+  // ✅ 정적 export 환경: 잘못된 타입이 클라이언트에서 접근된 경우 홈으로 리다이렉트
+  useEffect(() => {
+    const validTypes: ResultType[] = ['rocket', 'cloud', 'guardian', 'island', 'bureaucrat', 'priest', 'void', 'circle'];
+    if (!validTypes.includes(type) || !results[type]) {
+      // 정적 export에서는 window.location.href가 가장 확실함
+      window.location.href = '/';
+    }
+  }, [type]);
+
   const theme = THEME_BY_TYPE[type];
   const result = results[type];
 
@@ -546,7 +555,11 @@ export function ResultClient({ type }: { type: ResultType }) {
       <motion.div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-[0.14] bg-[url('/noise.svg')] bg-repeat"
-        style={{ backgroundSize: '220px 220px' }}
+        style={{ 
+          backgroundImage: 'url(/noise.svg)',
+          backgroundSize: '220px 220px',
+          backgroundRepeat: 'repeat',
+        }}
         animate={{ backgroundPosition: ['0px 0px', '220px 220px'] }}
         transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
       />
