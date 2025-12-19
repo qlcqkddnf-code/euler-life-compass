@@ -34,8 +34,10 @@ export default function TestPage() {
 
   const currentQuestion = shuffledQuestions[currentIndex];
   const total = shuffledQuestions.length;
-  const answeredCount = Object.keys(answers).length;
-  const progress = total > 0 ? (answeredCount / total) * 100 : 0;
+  // ✅ 사람 기준 번호: currentIndex는 0부터 시작하므로 +1 해서 1/27부터 표시
+  const currentQuestionNumber = currentIndex + 1;
+  // ✅ Progress Bar도 currentIndex 기반으로 계산 (답변 개수가 아닌 현재 질문 번호 기준)
+  const progress = total > 0 ? (currentQuestionNumber / total) * 100 : 0;
 
   const handleAnswer = (score: number) => {
     if (!currentQuestion) return;
@@ -47,15 +49,18 @@ export default function TestPage() {
     };
     setAnswers(nextAnswers);
 
-    // ✅ 27번 질문 문제 해결: currentIndex는 0~26 (27개 질문)
-    // currentIndex === 26일 때가 마지막 질문(27번)이므로
-    // currentIndex + 1 === total일 때 모든 질문 완료
-    const isLastQuestion = currentIndex + 1 >= total;
+    // ✅ 마지막 질문 완주 보장: currentIndex는 0~26 (27개 질문)
+    // currentIndex === 26 (27번째 질문)일 때 답변을 클릭하면 모든 질문 완료
+    // 조건: currentIndex === total - 1 (26 === 27 - 1)이면 마지막 질문
+    const isLastQuestion = currentIndex === total - 1;
 
     if (!isLastQuestion) {
       // 다음 문항으로 이동 (currentIndex 증가)
+      // currentIndex가 0~25일 때는 다음 질문으로 이동
       setCurrentIndex(prev => prev + 1);
     } else {
+      // ✅ 마지막 질문(27번, currentIndex === 26) 답변 클릭 시
+      // 모든 27개 질문이 완료된 상태이므로 결과 계산 후 리다이렉트
       // ✅ 모든 문항 완료 - 결과 계산이 완료된 후에만 리다이렉트
       // 계산이 끝나기 전에 페이지 이동을 시도하지 않도록 보장
       try {
@@ -137,9 +142,9 @@ export default function TestPage() {
           padding: '3rem 1rem',
         }}
       >
-        {/* Progress Text */}
+        {/* Progress Text - 사람 기준 번호로 표시 (1/27부터 시작) */}
         <div className="text-center mb-8 text-slate-400" style={{ textAlign: 'center', marginBottom: '2rem', color: '#94a3b8' }}>
-          {currentIndex + 1} / {total}
+          {currentQuestionNumber} / {total}
         </div>
 
         {/* Question Card */}
