@@ -503,7 +503,11 @@ export function ResultClient({ type }: { type: ResultType }) {
   }, [searchParams]);
 
   const handleShare = useCallback(async () => {
-    const pathname = window.location.pathname.endsWith('/') ? window.location.pathname : `${window.location.pathname}/`;
+    // ✅ trailingSlash: true와 일치하도록 경로 끝에 /를 반드시 포함
+    let pathname = window.location.pathname;
+    if (!pathname.endsWith('/')) {
+      pathname = `${pathname}/`;
+    }
     const base = `${window.location.origin}${pathname}`;
     const url = new URL(base);
 
@@ -542,7 +546,11 @@ export function ResultClient({ type }: { type: ResultType }) {
       <motion.div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-[0.14] bg-[url('/noise.svg')] bg-repeat"
-        style={{ backgroundSize: '220px 220px' }}
+        style={{ 
+          backgroundImage: 'url(/noise.svg)',
+          backgroundSize: '220px 220px',
+          backgroundRepeat: 'repeat',
+        }}
         animate={{ backgroundPosition: ['0px 0px', '220px 220px'] }}
         transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
       />

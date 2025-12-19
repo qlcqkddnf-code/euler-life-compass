@@ -59,7 +59,12 @@ export default function TestPage() {
         pi: averages.pi.toFixed(2),
       }).toString();
       // ✅ 정적 export 환경에서 가장 확실한 이동: 전체 페이지 네비게이션
-      window.location.href = `/result/${type}/?${qs}`;
+      // trailingSlash: true와 일치하도록 경로 끝에 /를 반드시 포함
+      // 경로가 깨지지 않도록 명시적으로 구성
+      const resultPath = `/result/${type}/`;
+      const fullUrl = qs ? `${resultPath}?${qs}` : resultPath;
+      // 절대 경로로 확실하게 이동 (상대 경로 오류 방지)
+      window.location.href = fullUrl.startsWith('/') ? fullUrl : `/${fullUrl}`;
     }
   };
 
@@ -88,8 +93,9 @@ export default function TestPage() {
       className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white"
       style={{
         minHeight: '100vh',
-        backgroundColor: 'black',
-        color: 'white',
+        backgroundColor: '#000',
+        color: '#fff',
+        width: '100%',
       }}
     >
       {/* Progress Bar */}

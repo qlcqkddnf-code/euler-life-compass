@@ -6,14 +6,15 @@ export default function Home() {
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black text-white"
       style={{
         minHeight: "100vh",
-        backgroundColor: "black",
-        color: "white",
+        backgroundColor: "#000",
+        color: "#fff",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
         position: "relative",
+        width: "100%",
       }}
     >
       {/* 배경 노이즈 효과 */}

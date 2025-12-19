@@ -33,17 +33,29 @@ export default function RootLayout({
           margin: 0,
         }}
       >
-        {/* ✅ “가장 원초적이고 확실한 방법”: CSS가 하나도 로드되지 않아도 무조건 다크 바탕 강제 */}
-        <style>{`
+        {/* ✅ "가장 원초적이고 확실한 방법": CSS가 하나도 로드되지 않아도 무조건 다크 바탕 강제 */}
+        <style dangerouslySetInnerHTML={{ __html: `
           html, body {
             background: #000 !important;
             color: #fff !important;
             height: 100%;
             margin: 0;
+            padding: 0;
           }
-          a { color: inherit; }
-          * { box-sizing: border-box; }
-        `}</style>
+          html {
+            min-height: 100%;
+          }
+          body {
+            min-height: 100vh;
+          }
+          a { 
+            color: inherit; 
+            text-decoration: none;
+          }
+          * { 
+            box-sizing: border-box; 
+          }
+        `}} />
         {children}
       </body>
     </html>
