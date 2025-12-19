@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import type { ResultType } from '@/utils/calculateResult';
 import { ResultClient } from './ResultClient';
 
@@ -31,13 +31,23 @@ const validTypes: readonly ResultType[] = [
 export default function ResultPage({ params }: { params: { type: string } }) {
   const type = params.type as ResultType;
 
-  // 정적 export 환경에서는 잘못된 type 경로는 기본적으로 404가 되므로,
-  // 클라이언트 네비게이션/개발 환경에서도 일관되게 홈으로 보냄.
-  // trailingSlash: true와 일치하도록 홈 경로도 /로 끝나게 처리
+  // ✅ 정적 export 환경: generateStaticParams로 생성된 페이지만 존재하므로
+  // 잘못된 타입은 빌드 타임에 404가 됨. 런타임 검증은 클라이언트에서 처리
+  // redirect()는 정적 export에서 작동하지 않으므로 제거
   if (!validTypes.includes(type)) {
-    redirect('/');
+    // 정적 export에서는 이 코드가 실행될 일이 거의 없지만,
+    // 혹시 모를 경우를 대비해 클라이언트 컴포넌트에서 처리
+    return (
+      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>로딩 중...</div>}>
+        <ResultClient type={type} />
+      </Suspense>
+    );
   }
 
-  return <ResultClient type={type} />;
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>로딩 중...</div>}>
+      <ResultClient type={type} />
+    </Suspense>
+  );
 }
 
