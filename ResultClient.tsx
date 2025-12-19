@@ -503,7 +503,11 @@ export function ResultClient({ type }: { type: ResultType }) {
   }, [searchParams]);
 
   const handleShare = useCallback(async () => {
-    const pathname = window.location.pathname.endsWith('/') ? window.location.pathname : `${window.location.pathname}/`;
+    // ✅ trailingSlash: true와 일치하도록 경로 끝에 /를 반드시 포함
+    let pathname = window.location.pathname;
+    if (!pathname.endsWith('/')) {
+      pathname = `${pathname}/`;
+    }
     const base = `${window.location.origin}${pathname}`;
     const url = new URL(base);
 
