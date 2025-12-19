@@ -34,10 +34,12 @@ export default function TestPage() {
 
   const currentQuestion = shuffledQuestions[currentIndex];
   const total = shuffledQuestions.length;
-  // ✅ 사람 기준 번호: currentIndex는 0부터 시작하므로 +1 해서 1/27부터 표시
-  const currentQuestionNumber = currentIndex + 1;
+  // ✅ 사람 기준 번호: 0이 절대 표시되지 않도록 Math.max로 보장
+  // currentIndex는 0부터 시작하므로 +1, 하지만 최소값을 1로 강제
+  const currentQuestionNumber = Math.max(1, currentIndex + 1);
   // ✅ Progress Bar도 currentIndex 기반으로 계산 (답변 개수가 아닌 현재 질문 번호 기준)
-  const progress = total > 0 ? (currentQuestionNumber / total) * 100 : 0;
+  // total이 0이면 progress도 0, 그 외에는 항상 1 이상의 값으로 계산
+  const progress = total > 0 ? Math.max(1, (currentQuestionNumber / total) * 100) : 0;
 
   const handleAnswer = (score: number) => {
     if (!currentQuestion) return;
@@ -142,9 +144,9 @@ export default function TestPage() {
           padding: '3rem 1rem',
         }}
       >
-        {/* Progress Text - 사람 기준 번호로 표시 (1/27부터 시작) */}
+        {/* Progress Text - 사람 기준 번호로 표시 (1/27부터 시작, 0 절대 표시 안 됨) */}
         <div className="text-center mb-8 text-slate-400" style={{ textAlign: 'center', marginBottom: '2rem', color: '#94a3b8' }}>
-          {currentQuestionNumber} / {total}
+          {Math.max(1, currentQuestionNumber)} / {Math.max(1, total)}
         </div>
 
         {/* Question Card */}
