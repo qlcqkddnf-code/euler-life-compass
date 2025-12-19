@@ -47,26 +47,37 @@ export default function TestPage() {
     };
     setAnswers(nextAnswers);
 
-    // 다음 문항으로 이동
-    if (currentIndex < total - 1) {
+    // ✅ 27번 질문 문제 해결: currentIndex는 0~26 (27개 질문)
+    // currentIndex === 26일 때가 마지막 질문(27번)이므로
+    // currentIndex + 1 === total일 때 모든 질문 완료
+    const isLastQuestion = currentIndex + 1 >= total;
+
+    if (!isLastQuestion) {
+      // 다음 문항으로 이동 (currentIndex 증가)
       setCurrentIndex(prev => prev + 1);
     } else {
-      // 모든 문항 완료 - 결과 계산 및 리다이렉트
-      const { type, averages } = calculateResultDetailed(nextAnswers);
-      const qs = new URLSearchParams({
-        e: averages.e.toFixed(2),
-        i: averages.i.toFixed(2),
-        pi: averages.pi.toFixed(2),
-      }).toString();
-      // ✅ 정적 export 환경: Vercel 정적 호스팅에서 가장 확실한 방법
-      // trailingSlash: true와 일치하도록 경로 끝에 /를 반드시 포함
-      // 경로를 명확하게 구성하여 Vercel이 정확히 매칭하도록 함
-      const resultPath = `/result/${type}/`;
-      const fullUrl = qs ? `${resultPath}?${qs}` : resultPath;
-      
-      // 정적 export에서는 window.location.href가 가장 확실함
-      // router.push는 정적 export에서 제대로 작동하지 않을 수 있음
-      window.location.href = fullUrl;
+      // ✅ 모든 문항 완료 - 결과 계산이 완료된 후에만 리다이렉트
+      // 계산이 끝나기 전에 페이지 이동을 시도하지 않도록 보장
+      try {
+        const { type, averages } = calculateResultDetailed(nextAnswers);
+        const qs = new URLSearchParams({
+          e: averages.e.toFixed(2),
+          i: averages.i.toFixed(2),
+          pi: averages.pi.toFixed(2),
+        }).toString();
+        // ✅ 정적 export 환경: Vercel 정적 호스팅에서 가장 확실한 방법
+        // trailingSlash: true와 일치하도록 경로 끝에 /를 반드시 포함
+        const resultPath = `/result/${type}/`;
+        const fullUrl = qs ? `${resultPath}?${qs}` : resultPath;
+        
+        // 정적 export에서는 window.location.href가 가장 확실함
+        // 계산이 완료된 후에만 이동하도록 보장
+        window.location.href = fullUrl;
+      } catch (error) {
+        console.error('결과 계산 중 오류 발생:', error);
+        // 에러 발생 시에도 홈으로 이동하지 않고 에러 표시
+        alert('결과를 계산하는 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -128,7 +139,7 @@ export default function TestPage() {
       >
         {/* Progress Text */}
         <div className="text-center mb-8 text-slate-400" style={{ textAlign: 'center', marginBottom: '2rem', color: '#94a3b8' }}>
-          {answeredCount} / {total}
+          {currentIndex + 1} / {total}
         </div>
 
         {/* Question Card */}
